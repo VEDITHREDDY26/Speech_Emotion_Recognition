@@ -1,0 +1,22 @@
+{
+  "name": "emotion-detection-new",
+  "version": "1.0.0",
+  "description": "![image](https://user-images.githubusercontent.com/76913237/136359678-529a7afb-07e9-4502-bc6f-f4af2b591652.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.0.1"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16"
+  }
+}

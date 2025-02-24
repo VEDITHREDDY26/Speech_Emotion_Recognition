@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection Through Speech</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      let currentFileName = '';
+      
+      
+      function displayFileName() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileNameDisplay = document.getElementById('selectedFileName');
+        const fileInputText = document.getElementById('fileInputText');
+        
+        if (fileInput.files.length > 0) {
+          currentFileName = fileInput.files[0].name;
+          fileInputText.textContent = currentFileName;
+          fileNameDisplay.textContent = currentFileName;
+          fileNameDisplay.classList.remove('hidden');
+          
+          // Store filename in localStorage to persist across form submissions
+          localStorage.setItem('uploadedFileName', currentFileName);
+        } else {
+          fileInputText.textContent = 'Choose File';
+          fileNameDisplay.classList.add('hidden');
+        }
+      }
+
+      // Function to restore filename on page load
+      window.onload = () => {
+        const savedFileName = localStorage.getItem('uploadedFileName');
+        if (savedFileName) {
+          const fileNameDisplay = document.getElementById('selectedFileName');
+          const fileInputText = document.getElementById('fileInputText');
+          fileInputText.textContent = savedFileName;
+          fileNameDisplay.textContent = savedFileName;
+          fileNameDisplay.classList.remove('hidden');
+        }
+        window.history.replaceState("", "");
+      };
+
+      function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector('.file-input-wrapper').classList.add('drag-active');
+      }
+
+      function handleDragLeave(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector('.file-input-wrapper').classList.remove('drag-active');
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const fileInput = document.querySelector('input[type="file"]');
+        const files = event.dataTransfer.files;
+        
+        if (files.length > 0 && files[0].type.startsWith('audio/')) {
+          fileInput.files = files;
+          displayFileName();
+        } else {
+          showToast('Please drop an audio file');
+        }
+        
+        document.querySelector('.file-input-wrapper').classList.remove('drag-active');
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+      }
+
+      function resetForm() {
+        const form = document.querySelector('form');
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileInputText = document.getElementById('fileInputText');
+        const fileNameDisplay = document.getElementById('selectedFileName');
+        
+        form.reset();
+        fileInput.value = '';
+        fileInputText.textContent = 'Choose File';
+        fileNameDisplay.classList.add('hidden');
+        
+        // Hide result sections if they exist
+        const resultContainer = document.querySelector('.result-container');
+        if (resultContainer) resultContainer.classList.add('hidden');
+      }
+    </script>
+
+    <style>
+      body {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url('https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&q=80') no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+
+      .content-container {
+        width: 90%;
+        max-width: 700px;
+        margin: 2rem auto;
+      }
+
+      .form-container {
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+      }
+
+      .form-container:hover {
+        transform: translateY(-5px);
+      }
+
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 120px;
+        justify-content: center;
+      }
+
+      .file-input-wrapper:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .file-input-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+      }
+
+      .file-input-button {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+      }
+
+      .file-input-button:hover {
+        background: linear-gradient(135deg, #0891b2, #0e7490);
+        transform: translateY(-1px);
+      }
+
+      .file-name-text {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    
+      
+
+      .submit-btn {
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+      }
+
+      .recorder-btn {
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+      }
+
+      .recorder-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+      }
+
+      .result-container {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .emotion-text {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .emotion-image {
+        transition: transform 0.3s ease;
+      }
+
+      .emotion-image:hover {
+        transform: scale(1.05);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      audio::-webkit-media-controls-panel {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      @media (max-width: 640px) {
+        .content-container {
+          width: 95%;
+          margin: 1rem auto;
+        }
+      }
+
+      .drag-active {
+        border: 2px dashed #06b6d4 !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+      }
+
+      .drag-text {
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .helper-text {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .reset-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-left: 1rem;
+      }
+
+      .reset-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div class="content-container">
+      <!-- Heading Section -->
+      <h1 class="text-5xl font-extrabold text-white text-center mb-8 drop-shadow-lg emotion-text">
+        Emotion Detection Through Speech
+      </h1>
+
+      <!-- Main Form Container -->
+      <form action="." method="post" enctype="multipart/form-data" class="glass-effect p-8 rounded-2xl w-full form-container">
+        <div class="space-y-6">
+          <!-- File Upload Section -->
+          <div class="bg-transparent p-4 rounded-lg w-full file-input-wrapper"
+               ondragover="handleDragOver(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleDrop(event)">
+            <label class="file-input-label">
+              <span class="file-input-button">Choose File</span>
+              <span id="fileInputText" class="file-name-text">No file chosen</span>
+              <input type="file" name="shashifile" accept="audio/*" onchange="displayFileName()" class="hidden">
+            </label>
+            <!-- <div class="drag-text">or drag and drop your audio file here</div>
+            <div class="helper-text">Supported formats: MP3, WAV, M4A, etc.</div> -->
+            <div id="selectedFileName" class="mt-2 text-gray-700 font-medium text-sm hidden"></div>
+          </div>
+
+          <div class="flex items-center justify-center">
+            <input type="submit" value="Detect Emotion" class="submit-btn text-white px-8 py-3 rounded-lg shadow-md cursor-pointer font-semibold">
+            <button type="button" onclick="resetForm()" class="reset-btn">Reset</button>
+          </div>
+
+          <!-- Result Section -->
+          {% if result1 %}
+          <div class="mt-6 flex flex-col items-center space-y-4 result-container">
+            <div class="text-3xl italic font-semibold text-white drop-shadow-lg text-center emotion-text">
+              {{ r1[0] }}
+            </div>
+            <div class="flex justify-center p-2">
+              <img src="{{ r1[1] }}" width="180" alt="Emotion Image" class="rounded-lg shadow-lg emotion-image">
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Warning Section -->
+          {% if r2 %}
+          <div class="text-red-400 text-xl font-bold text-center mt-4 result-container">
+            {{ r2 }}
+          </div>
+          {% endif %}
+
+          <!-- Audio Section -->
+          <!-- {% if a %}
+          <div class="flex justify-center mt-4 result-container">
+            <audio src="{{ a }}" controls class="w-full rounded-lg"></audio>
+          </div>
+          {% endif %}
+        </div> -->
+      </form>
+
+      <!-- Recorder Button -->
+    </div>
+    <div class="flex justify-center mt-7">
+      <a href="/record" class="recorder-btn text-white px-8 py-3 rounded-lg shadow-md hover:bg-cyan-600 no-underline font-semibold">
+        Open Recorder
+      </a>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+  </body>
+</html>

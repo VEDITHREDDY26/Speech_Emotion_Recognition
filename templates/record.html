@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record Audio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background: linear-gradient(
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.6)
+          ),
+          url('https://plus.unsplash.com/premium_photo-1679082305610-b0895b20d173?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
+            no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+      .content-container {
+        width: 90%;
+        max-width: 700px;
+        margin: 2rem auto;
+      }
+      .form-container {
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+      }
+      .form-container:hover {
+        transform: translateY(-5px);
+      }
+      .recorder-btn {
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+      }
+      .recorder-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-container">
+      <!-- Home Button -->
+      <div class="flex justify-end mb-4">
+        <a
+          href="/"
+          class="px-4 py-2 text-white bg-gray-700 rounded hover:bg-gray-600 no-underline"
+          >Home</a
+        >
+      </div>
+
+      <!-- Form Container -->
+      <div class="glass-effect p-8 rounded-2xl form-container">
+        <form action="/record" method="post">
+          <div class="mb-6 text-center">
+            <input
+              type="submit"
+              value="Start Recording"
+              onclick="this.value='Recording.....'"
+              class="recorder-btn text-white px-8 py-3 rounded-lg shadow-md cursor-pointer font-semibold"
+            />
+          </div>
+          <p class="text-center text-white text-lg">
+            NOTE: This Recording is for 5 sec
+          </p>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

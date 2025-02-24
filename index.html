@@ -1,0 +1,122 @@
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      // Import Firebase
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signInWithPopup,
+        GoogleAuthProvider,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyA4WiRcG7LaUnf_2Mdebm0mk5UNzJc8QsM",
+        authDomain: "speechemotionrecognition-15bb5.firebaseapp.com",
+        projectId: "speechemotionrecognition-15bb5",
+        storageBucket: "speechemotionrecognition-15bb5.firebasestorage.app",
+        messagingSenderId: "565900029586",
+        appId: "1:565900029586:web:d6b91ac5f180aa44c8804b",
+        measurementId: "G-FW4QXEX8ZS",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      // Check if user is logged in
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          alert("User is already logged in!");
+          console.log("Logged in user:", user);
+        }
+      });
+
+      // Register a new user
+      window.register = () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            alert("Registration successful! Logging you in...");
+            console.log(userCredential.user);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      };
+
+      // Login with Email & Password
+      window.login = () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            alert("Login successful!");
+            console.log(userCredential.user);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      };
+
+      // Login with Google
+      window.googleLogin = () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            alert("Google Sign-in successful!");
+            console.log(result.user);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      };
+    </script>
+  </head>
+  <body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="w-96 p-6 bg-white rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold text-center mb-4">Login / Register</h2>
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        class="w-full px-4 py-2 mb-2 border rounded-lg"
+      />
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        class="w-full px-4 py-2 mb-4 border rounded-lg"
+      />
+      <button
+        onclick="login()"
+        class="w-full py-2 mb-2 bg-blue-500 text-white rounded-lg"
+      >
+        Login
+      </button>
+      <button
+        onclick="register()"
+        class="w-full py-2 mb-2 bg-green-500 text-white rounded-lg"
+      >
+        Register
+      </button>
+      <button
+        onclick="googleLogin()"
+        class="w-full py-2 bg-red-500 text-white rounded-lg"
+      >
+        Sign in with Google
+      </button>
+    </div>
+  </body>
+</html>
